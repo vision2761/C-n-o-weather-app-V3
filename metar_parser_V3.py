@@ -1,4 +1,4 @@
-# metar_parser_V3_fixed.py
+# metar_parser_V3.py
 # 修复：站号识别、越南时间、本地时间、批量解析、云高(m)
 
 import re
@@ -46,7 +46,6 @@ def parse_single_metar(text: str):
         hour = int(raw[2:4])
         minute = int(raw[4:6])
 
-        # 默认按当前月 / 年推算
         now = datetime.utcnow()
         obs_time_utc = datetime(now.year, now.month, day, hour, minute)
         vn_time = obs_time_utc + timedelta(hours=7)
@@ -55,7 +54,7 @@ def parse_single_metar(text: str):
         result["obs_time_vietnam"] = vn_time.strftime("%Y-%m-%d %H:%M (越南)")
 
     # -----------------------------------------------------
-    # 风，如 07008KT 或 340V120 变化风向
+    # 风
     # -----------------------------------------------------
     wind = re.search(r"(VRB|\d{3})(\d{2,3})(?:G(\d{2,3}))?KT", text)
     if wind:
@@ -66,7 +65,7 @@ def parse_single_metar(text: str):
             result["wind_gust"] = int(wind.group(3))
 
     # -----------------------------------------------------
-    # 能见度（4 位数字）
+    # 能见度
     # -----------------------------------------------------
     vis = re.search(r"\b(\d{4})\b", text)
     if vis:
@@ -83,7 +82,7 @@ def parse_single_metar(text: str):
         result["dewpoint"] = -int(d[1:]) if d.startswith("M") else int(d)
 
     # -----------------------------------------------------
-    # 云量 FEW / SCT / BKN / OVC
+    # 云量与高度（转米）
     # -----------------------------------------------------
     clouds = re.findall(r"(FEW|SCT|BKN|OVC)(\d{3})", text)
     for amt, h in clouds:
@@ -127,10 +126,9 @@ def parse_single_metar(text: str):
 
 
 # ---------------------------------------------------------
-# 批量解析：多个报文一次输入
+# 批量解析多个 METAR
 # ---------------------------------------------------------
 def parse_multiple_metar(text_block: str):
-    # 用等号和换行分段
     raw_segments = re.split(r"=\s*|\n+", text_block)
     segments = [s.strip() for s in raw_segments if s.strip()]
 
