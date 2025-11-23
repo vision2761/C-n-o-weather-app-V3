@@ -124,7 +124,7 @@ def page_metar():
     def to_vn(t):
         if not isinstance(t, str):
             return ""
-        m = re.match(r"(\\d{2})(\\d{2})(\\d{2})Z", t)
+        m = re.match(r"(\d{2})(\d{2})(\d{2})Z", t)
         if not m:
             return ""
         dd, hh, mm = int(m.group(1)), int(m.group(2)), int(m.group(3))
