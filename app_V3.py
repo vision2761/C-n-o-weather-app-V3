@@ -124,7 +124,7 @@ def page_metar():
     def to_vn(t):
         if not isinstance(t, str):
             return ""
-        m = re.match(r"(\d{2})(\d{2})(\d{2})Z", t)
+        m = re.match(r"(\\d{2})(\\d{2})(\\d{2})Z", t)
         if not m:
             return ""
         dd, hh, mm = int(m.group(1)), int(m.group(2)), int(m.group(3))
@@ -204,7 +204,7 @@ def page_rain():
 # 4）自动降水事件分析（事件分段 + 图表）
 # ============================================================
 def page_rain_analysis():
-    st.header("📘 自动降水事件分析（V3）")
+    st.header("📘 自动降水事件分析")
 
     s1, s2 = st.columns(2)
     with s1:
@@ -238,19 +238,19 @@ def main():
     st.title("✈ 昆岛机场气象记录系统 V3")
 
     page = st.sidebar.radio(
-        "功能选择", 
+        "功能选择",
         [
             "天气预报",
             "METAR 多条解析",
             "降水记录",
-            "自动降水事件分析（V3）",
+            "自动降水事件分析",
         ]
     )
 
     if page == "天气预报": page_forecast()
     elif page == "METAR 多条解析": page_metar()
     elif page == "降水记录": page_rain()
-    elif page == "自动降水事件分析（V3）": page_rain_analysis()
+    elif page == "自动降水事件分析": page_rain_analysis()
 
 
 if __name__ == "__main__":
