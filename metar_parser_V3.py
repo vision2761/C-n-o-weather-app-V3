@@ -15,15 +15,16 @@ def parse_metar(text: str) -> Dict:
         解析结果字典
     """
     # 预处理
-    text = text.strip()
-    text = " ".join(text.split())  # 合并多行，去除多余空格
-    text = text.replace("=", "")   # 去除结束标记
+    original_input = " ".join(text.strip().split())  # 合并多行，去除多余空格
+    # 原始报文需保留结束符"="供展示
+    raw_display = original_input if original_input.endswith("=") else original_input + "="
+    text = original_input.replace("=", "")   # 去除结束标记用于解析
     
     # 去除Rx前缀（如：Rx 210330Z METAR...）
     text = re.sub(r'^Rx\s+\d{6}Z\s+', '', text)
     
     result = {
-        "raw": text,
+        "raw": raw_display,
         "station": None,
         "obs_time": None,
         "wind_direction": None,
